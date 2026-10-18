@@ -1,45 +1,80 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | mahjong-lite</title>
-  </head>
-  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width=960 height=600 tabindex="-1" style="width: 960px; height: 600px; background: #231F20"></canvas>
-    <script src="Build/Live.loader.js"></script>
-    <script>
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
 
-        var canvas = document.querySelector("#unity-canvas");
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        canvas.style.position = "fixed";
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1,
+                 maximum-scale=1, user-scalable=no">
+  <title>mahjong-lite</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
 
-        document.body.style.textAlign = "left";
+    #unity-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
 
-      }
+    #unity-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      outline: none;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="unity-container">
+    <canvas id="unity-canvas"
+            width="960"
+            height="600"
+            tabindex="-1">
+    </canvas>
+  </div>
 
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        arguments: [],
-        dataUrl: "Build/Live.data.unityweb",
-        frameworkUrl: "Build/Live.framework.js.unityweb",
-        codeUrl: "Build/Live.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "mahjong-lite",
-        productVersion: "1.0",
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+  <script>
+    const canvas = document.querySelector("#unity-canvas");
+
+    const buildUrl = "Build";
+    const loaderUrl = buildUrl + "/Live.loader.js";
+
+    const config = {
+      dataUrl: buildUrl + "/Live.data.unityweb",
+      frameworkUrl: buildUrl + "/Live.framework.js.unityweb",
+      codeUrl: buildUrl + "/Live.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "DefaultCompany",
+      productName: "mahjong-lite",
+      productVersion: "1.0"
+    };
+
+    const script = document.createElement("script");
+    script.src = loaderUrl;
+
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        // Optional: update a loading indicator here.
       }).then((unityInstance) => {
+        window.unityInstance = unityInstance;
       }).catch((message) => {
-        alert(message);
+        console.error(message);
       });
-    </script>
-  </body>
+    };
+
+    document.body.appendChild(script);
+  </script>
+</body>
 </html>
